@@ -1,7 +1,5 @@
-import { Component } from '@angular/core';
-import { ChartDataset, ChartOptions } from 'chart.js';
-import { Member } from 'src/models/Member';
-import { MemeberService } from 'src/services/memeber.service';
+import { Component, OnInit } from '@angular/core';
+import { MemberService } from 'src/services/memeber.service';
 import { EvtService } from 'src/services/evt.service';
 import { PublicationService } from 'src/services/publication.service';
 
@@ -10,75 +8,78 @@ import { PublicationService } from 'src/services/publication.service';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
+
   NbMembers: number = 0;
   NbEvents: number = 0;
+  NbPublications: number = 0;
   NbTools: number = 0;
-  NbArticles: number = 0;
   NbStudents: number = 0;
   NbTeachers: number = 0;
+  NbArticles: number = 0;
 
-  chartData: ChartDataset[] = [
-    {
-      label: 'Statistics',
-      data: [0, 0, 0, 0]
-    }
-  ];
-  chartLabels: string[] = ['Members', 'Events', 'Tools', 'Articles'];
-  chartOptions: ChartOptions = {
-    responsive: true,
-    maintainAspectRatio: true
-  };
-
-  pieChartData: ChartDataset[] = [
-    {
-      data: [0, 0]
-    }
-  ];
-  pieChartLabels: string[] = ['Students', 'Teachers'];
-  pieChartOptions: ChartOptions = {
-    responsive: true,
-    maintainAspectRatio: true,
-    plugins: {
-      legend: {
-        position: 'bottom'
-      }
-    }
-  };
+  // Chart Properties (Initialized to avoid errors)
+  chartData: any[] = [];
+  chartLabels: string[] = [];
+  chartOptions: any = { responsive: true };
+  
+  pieChartData: any[] = [];
+  pieChartLabels: string[] = [];
+  pieChartOptions: any = { responsive: true };
 
   constructor(
-    private Ms: MemeberService,
-    private ES: EvtService,
-    private PS: PublicationService
-  ){
-    this.Ms.GETALLMembers().subscribe((res: Member[]) => {
-      this.NbMembers = res.length;
-      this.NbStudents = res.filter(m => m.type === 'student').length;
-      this.NbTeachers = res.filter(m => m.type === 'teacher').length;
-      this.updateCharts();
-    });
-    this.ES.GETALLEvts().subscribe((res) => {
-      this.NbEvents = res.length;
-      this.updateCharts();
-    });
-    this.PS.GETALLPublications().subscribe((res: any[]) => {
-      this.NbArticles = res.filter(p => p.type === 'article').length;
-      this.updateCharts();
-    });
-  }
+    private Ms: MemberService,
+    private Es: EvtService,
+    private Ps: PublicationService
+  ) {}
 
-  updateCharts() {
-    this.chartData = [
-      {
-        label: 'Statistics',
-        data: [this.NbMembers, this.NbEvents, this.NbTools, this.NbArticles]
+  ngOnInit(): void {
+    // 1. Load Members (Safe Subscription)
+    this.Ms.GETALLMembers().subscribe({
+      next: (data) => {
+        this.NbMembers = data.length;
+        this.NbStudents = data.filter((m: any) => m.role === 'STUDENT').length;
+        this.NbTeachers = data.filter((m: any) => m.role === 'TEACHER').length;
+        
+        // Prepare Pie Chart
+        this.pieChartLabels = ['Students', 'Teachers'];
+        this.pieChartData = [
+          { data: [this.NbStudents, this.NbTeachers], label: 'Distribution' }
+        ];
+      },
+      error: (err) => {
+        console.error('Error loading members', err);
+        // Set defaults so UI doesn't look broken
+        this.NbMembers = 0;
       }
-    ];
+    });
 
-    this.pieChartData = [
-      {
-        data: [this.NbStudents, this.NbTeachers]
+    // 2. Load Events (Safe Subscription)
+    this.Es.GETALLEvts().subscribe({
+      next: (data) => {
+        this.NbEvents = data.length;
+        // Simple line chart mock data based on count
+        this.chartLabels = ['Total Events'];
+        this.chartData = [
+          { data: [this.NbEvents], label: 'Events' }
+        ];
+      },
+      error: (err) => {
+        console.error('Error loading events', err);
+        this.NbEvents = 0;
       }
-    ];
+    });
+
+    // 3. Load Publications (Safe Subscription)
+    this.Ps.GETALLPublications().subscribe({
+      next: (data) => {
+        this.NbPublications = data.length;
+        this.NbArticles = data.filter((p: any) => p.type === 'Article').length;
+      },
+      error: (err) => {
+        console.error('Error loading publications', err);
+        this.NbPublications = 0;
+      }
+    });
   }
 }

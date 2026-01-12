@@ -1,23 +1,51 @@
-<p>member-form works!</p>
+<h2 mat-dialog-title>{{ isEdit ? 'Edit Member' : 'Add Member' }}</h2>
 
-<h2>Member Form</h2>
-<form [formGroup]="form" (ngSubmit)="sub()"class="member-form">
-    <mat-form-field appearance="fill">   
-    <input matInput placeholder="cin" formControlName="cin">
-    </mat-form-field>
-    <mat-form-field appearance="fill">   
-    <input matInput placeholder="name"formControlName="name">
-    </mat-form-field>
-    <mat-form-field appearance="fill">   
-    <input matInput placeholder="type"formControlName="type">
-    </mat-form-field>
-    <mat-form-field appearance="fill">   
-    <input matInput placeholder="cv"formControlName="cv">
-    </mat-form-field>
-    <mat-form-field appearance="fill">   
-    <input matInput placeholder="createdDate"formControlName="createdDate">
-    </mat-form-field>
-    <div class="button-style">
-    <button mat-raised-button color="primary" type="submit">Submit</button>
-    </div>
-</form>
+<div mat-dialog-content [formGroup]="form" style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px;">
+
+  <mat-form-field appearance="outline">
+    <mat-label>CIN</mat-label>
+    <input matInput formControlName="cin" />
+    <mat-error *ngIf="form.get('cin')?.hasError('required')">CIN is required</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Type</mat-label>
+    <input matInput formControlName="type" placeholder="ens / etudiant / ..." />
+    <mat-error *ngIf="form.get('type')?.hasError('required')">Type is required</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>First name (prenom)</mat-label>
+    <input matInput formControlName="prenom" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Last name (nom)</mat-label>
+    <input matInput formControlName="nom" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" style="grid-column: 1 / -1;">
+    <mat-label>Name (if your backend uses a single field)</mat-label>
+    <input matInput formControlName="name" placeholder="Optional if you use prenom/nom" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" style="grid-column: 1 / -1;">
+    <mat-label>CV (URL or text)</mat-label>
+    <input matInput formControlName="cv" placeholder="https://..." />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Date</mat-label>
+    <input matInput [matDatepicker]="picker" formControlName="date" />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+</div>
+
+<div mat-dialog-actions align="end" style="gap: 8px;">
+  <button mat-button (click)="close()" [disabled]="loading">Cancel</button>
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid || loading">
+    {{ loading ? 'Saving...' : (isEdit ? 'Update' : 'Create') }}
+  </button>
+</div>
