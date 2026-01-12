@@ -1,0 +1,96 @@
+{
+  "members": [
+    {
+      "id": "63f5",
+      "cin": "11168434",
+      "name": "wiem",
+      "type": "teacher",
+      "cv": "lien",
+      "createdDate": "12/11/2025"
+    },
+    {
+      "id": "20f6",
+      "cin": "11168434",
+      "name": "wiem",
+      "type": "teacher",
+      "cv": "lien",
+      "createdDate": "12/11/2025"
+    },
+    {
+      "id": "2be9",
+      "cin": "11168434",
+      "name": "wiem",
+      "type": "student",
+      "cv": "lien",
+      "createdDate": "12/11/2025"
+    },
+    {
+      "id": "18b9",
+      "cin": "11223344",
+      "name": "wiwi",
+      "type": "student",
+      "cv": "lien",
+      "createdDate": "2025-04-11"
+    },
+    {
+      "id": "e640",
+      "cin": "12345678",
+      "name": "aaa",
+      "type": "student",
+      "cv": null,
+      "createdDate": null
+    }
+  ],
+  "publications": [
+    {
+      "id": "p1",
+      "type": "article",
+      "titre": "AI-Powered Resource Allocation in Disaster Shelters",
+      "lien": "https://example.com/article1",
+      "date": "2025-01-10",
+      "sourcepdf": "https://example.com/article1.pdf"
+    },
+    {
+      "id": "p2",
+      "type": "conference",
+      "titre": "Blockchain-Based Pharmaceutical Supply Chain",
+      "lien": "https://example.com/conference1",
+      "date": "2024-11-05",
+      "sourcepdf": "https://example.com/conference1.pdf"
+    },
+    {
+      "id": "p3",
+      "type": "research",
+      "titre": "Handwriting Recognition for Mobile Interaction",
+      "lien": "https://example.com/research1",
+      "date": "2025-02-20",
+      "sourcepdf": "https://example.com/research1.pdf"
+    }
+  ],
+  "evts": [
+    {
+      "id": "e1",
+      "titre": "AI wala ndra chno",
+      "dateDeb": "2025-06-01",
+      "dateFin": "2025-06-03",
+      "lieu": "ENIS"
+    },
+    {
+      "id": "0c4a",
+      "titre": "TSYP",
+      "dateDeb": "2025-12-20T23:00:00.000Z",
+      "dateFin": "2025-12-23T23:00:00.000Z",
+      "lieu": "Diar Lemdina Hammamet"
+    },
+    {
+      "id": "9d22",
+      "titre": "Tunisian Students & Young Professionals congress",
+      "dateDeb": "2025-12-20T23:00:00.000Z",
+      "dateFin": "2025-12-23T23:00:00.000Z",
+      "lieu": "Hammamet"
+    },
+    {
+      "id": "a19b"
+    }
+  ]
+}

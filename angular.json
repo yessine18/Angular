@@ -11,6 +11,7 @@
       "prefix": "app",
       "architect": {
         "build": {
+          "baseHref": "/",
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "dist/lab",
@@ -25,7 +26,8 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "src/custom-theme.scss"
             ],
             "scripts": []
           },
@@ -34,13 +36,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "1mb",
+                  "maximumError": "2mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "4kb",
+                  "maximumError": "6kb"
                 }
               ],
               "outputHashing": "all"
@@ -94,5 +96,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "3dd1a32f-9dac-4c34-8304-2e52a0f11d93"
   }
 }

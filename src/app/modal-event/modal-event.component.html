@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>{{ data ? 'Modifier l\'événement' : 'Ajouter un événement' }}</h2>
+
+<mat-dialog-content [formGroup]="form">
+  <div style="display: flex; flex-direction: column; gap: 16px; min-width: 350px; padding-top: 10px;">
+
+    <!-- Champ Titre -->
+    <mat-form-field appearance="outline">
+      <mat-label>Titre</mat-label>
+      <input matInput placeholder="Titre de l'événement" formControlName="titre">
+      <mat-error *ngIf="form.get('titre')?.hasError('required')">
+        Le titre est requis
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Champ Date (Range Picker) -->
+    <mat-form-field appearance="outline">
+      <mat-label>Période de l'événement</mat-label>
+      <mat-date-range-input [rangePicker]="picker">
+        <input matStartDate formControlName="dateDeb" placeholder="Date début">
+        <input matEndDate formControlName="dateFin" placeholder="Date fin">
+      </mat-date-range-input>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+      
+      <mat-error *ngIf="form.get('dateDeb')?.hasError('required') || form.get('dateFin')?.hasError('required')">
+        Les dates sont requises
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Champ Lieu -->
+    <mat-form-field appearance="outline">
+      <mat-label>Lieu</mat-label>
+      <input matInput placeholder="Lieu de l'événement" formControlName="lieu">
+      <mat-error *ngIf="form.get('lieu')?.hasError('required')">
+        Le lieu est requis
+      </mat-error>
+    </mat-form-field>
+
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Annuler</button>
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">
+    {{ data ? 'Mettre à jour' : 'Sauvegarder' }}
+  </button>
+</mat-dialog-actions>

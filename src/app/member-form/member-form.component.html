@@ -1,0 +1,23 @@
+<p>member-form works!</p>
+
+<h2>Member Form</h2>
+<form [formGroup]="form" (ngSubmit)="sub()"class="member-form">
+    <mat-form-field appearance="fill">   
+    <input matInput placeholder="cin" formControlName="cin">
+    </mat-form-field>
+    <mat-form-field appearance="fill">   
+    <input matInput placeholder="name"formControlName="name">
+    </mat-form-field>
+    <mat-form-field appearance="fill">   
+    <input matInput placeholder="type"formControlName="type">
+    </mat-form-field>
+    <mat-form-field appearance="fill">   
+    <input matInput placeholder="cv"formControlName="cv">
+    </mat-form-field>
+    <mat-form-field appearance="fill">   
+    <input matInput placeholder="createdDate"formControlName="createdDate">
+    </mat-form-field>
+    <div class="button-style">
+    <button mat-raised-button color="primary" type="submit">Submit</button>
+    </div>
+</form>
