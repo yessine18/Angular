@@ -1,65 +1,64 @@
-<p>member works!</p>
+<div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:16px;">
+  <h2 style="margin:0;">Publications</h2>
 
-
-<div class="header-section">
-  <h2>Publications</h2>
-  <button mat-raised-button color="primary" routerLink="/create">
-    Create New Publication
+  <button mat-raised-button color="primary" (click)="addPublication()">
+    Add Publication
   </button>
 </div>
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 custom-table">
 
-  <!-- ID Column -->
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef> ID </th>
-    <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-  </ng-container>
+<div style="overflow:auto;">
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z2" style="width:100%;">
 
-  <!-- CIN Column -->
-  <ng-container matColumnDef="type">
-    <th mat-header-cell *matHeaderCellDef> TYPE </th>
-    <td mat-cell *matCellDef="let element"> {{element.type}} </td>
-  </ng-container>
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef>ID</th>
+      <td mat-cell *matCellDef="let p">{{ p.id }}</td>
+    </ng-container>
 
-  <!-- Name Column -->
-  <ng-container matColumnDef="titre">
-    <th mat-header-cell *matHeaderCellDef> Title </th>
-    <td mat-cell *matCellDef="let element"> {{element.titre}} </td>
-  </ng-container>
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef>Type</th>
+      <td mat-cell *matCellDef="let p">{{ p.type }}</td>
+    </ng-container>
 
-  <!-- Type Column -->
-  <ng-container matColumnDef="lien">
-    <th mat-header-cell *matHeaderCellDef> LIEN </th>
-    <td mat-cell *matCellDef="let element"> {{element.lien}} </td>
-  </ng-container>
+    <ng-container matColumnDef="titre">
+      <th mat-header-cell *matHeaderCellDef>Titre</th>
+      <td mat-cell *matCellDef="let p">{{ p.titre }}</td>
+    </ng-container>
 
-  <!-- CV Column -->
-  <ng-container matColumnDef="date">
-    <th mat-header-cell *matHeaderCellDef> Date </th>
-    <td mat-cell *matCellDef="let element"> {{element.date| date:'dd/MM/yyyy'}} </td>
-  </ng-container>
+    <ng-container matColumnDef="lien">
+      <th mat-header-cell *matHeaderCellDef>Lien</th>
+      <td mat-cell *matCellDef="let p">
+        <a *ngIf="p.lien" [href]="p.lien" target="_blank" rel="noopener noreferrer">Open</a>
+        <span *ngIf="!p.lien">-</span>
+      </td>
+    </ng-container>
 
-  <!-- Date Column -->
-  <ng-container matColumnDef="sourcepdf">
-    <th mat-header-cell *matHeaderCellDef> SourcePdf </th>
-    <td mat-cell *matCellDef="let element"> {{element.sourcepdf}} </td>
-  </ng-container>
-  <!-- ✅ Actions Column -->
-<ng-container matColumnDef="actions">
-  <th mat-header-cell *matHeaderCellDef> Actions </th>
-  <td mat-cell *matCellDef="let element">
-    <!-- Edit button -->
-    <button mat-icon-button color="primary" routerLink="/{{element.id}}/edit">
-      <mat-icon>edit</mat-icon>
-    </button>
+    <ng-container matColumnDef="dateApparition">
+      <th mat-header-cell *matHeaderCellDef>Date</th>
+      <td mat-cell *matCellDef="let p">{{ p.dateApparition | date:'yyyy-MM-dd' }}</td>
+    </ng-container>
 
-    <!-- Delete button -->
-    <button mat-icon-button color="warn" (click)="deletePublication(element.id)">
-      <mat-icon>delete</mat-icon>
-    </button>
-  </td>
-</ng-container>
+    <ng-container matColumnDef="sourcePdf">
+      <th mat-header-cell *matHeaderCellDef>PDF</th>
+      <td mat-cell *matCellDef="let p">
+        <a *ngIf="p.sourcePdf" [href]="p.sourcePdf" target="_blank" rel="noopener noreferrer">Open</a>
+        <span *ngIf="!p.sourcePdf">-</span>
+      </td>
+    </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let p">
+        <button mat-icon-button color="primary" (click)="editPublication(p)" aria-label="Edit">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <button mat-icon-button color="warn" (click)="deletePublication(p.id!)" [disabled]="!p.id" aria-label="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>

@@ -1,7 +1,6 @@
-export interface Evt{
-    id: string,
-    titre: string,
-    dateDeb: string,
-    dateFin: string,
-    lieu: string
+export interface Evt {
+  id?: number;
+  titre: string;
+  lieu: string;
+  dateApparition?: string; // matches backend
 }

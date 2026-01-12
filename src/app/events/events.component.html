@@ -1,72 +1,48 @@
-<div class="events-page">
-  <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:16px;">
-    <h2 style="margin:0;">Events</h2>
+<div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:16px;">
+  <h2 style="margin:0;">Events</h2>
 
-    <button mat-raised-button color="primary" (click)="addEvent()">
-      Add Event
-    </button>
-  </div>
+  <button mat-raised-button color="primary" (click)="addEvent()">
+    Add Event
+  </button>
+</div>
 
-  <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 12px;">
-    <mat-label>Filter</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Search..." />
-  </mat-form-field>
+<div style="overflow:auto;">
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z2" style="width:100%;">
 
-  <div style="overflow:auto;">
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z2" style="width:100%;">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef>ID</th>
+      <td mat-cell *matCellDef="let e">{{ e.id }}</td>
+    </ng-container>
 
-      <!-- ID -->
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef> ID </th>
-        <td mat-cell *matCellDef="let element">
-          {{ element.id ?? element._id ?? '-' }}
-        </td>
-      </ng-container>
+    <ng-container matColumnDef="titre">
+      <th mat-header-cell *matHeaderCellDef>Titre</th>
+      <td mat-cell *matCellDef="let e">{{ e.titre }}</td>
+    </ng-container>
 
-      <!-- TITLE -->
-      <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef> Title </th>
-        <td mat-cell *matCellDef="let element">
-          {{ getTitle(element) }}
-        </td>
-      </ng-container>
+    <ng-container matColumnDef="lieu">
+      <th mat-header-cell *matHeaderCellDef>Lieu</th>
+      <td mat-cell *matCellDef="let e">{{ e.lieu }}</td>
+    </ng-container>
 
-      <!-- DATE -->
-      <ng-container matColumnDef="date">
-        <th mat-header-cell *matHeaderCellDef> Date </th>
-        <td mat-cell *matCellDef="let element">
-          {{ getDate(element) | date:'yyyy-MM-dd' }}
-        </td>
-      </ng-container>
+    <ng-container matColumnDef="dateApparition">
+      <th mat-header-cell *matHeaderCellDef>Date</th>
+      <td mat-cell *matCellDef="let e">{{ e.dateApparition | date:'yyyy-MM-dd' }}</td>
+    </ng-container>
 
-      <!-- ACTIONS -->
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef> Actions </th>
-        <td mat-cell *matCellDef="let element">
-          <button mat-icon-button color="primary" (click)="editEvent(element)" aria-label="Edit">
-            <mat-icon>edit</mat-icon>
-          </button>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let e">
+        <button mat-icon-button color="primary" (click)="editEvent(e)" aria-label="Edit">
+          <mat-icon>edit</mat-icon>
+        </button>
 
-          <button mat-icon-button color="warn" (click)="deleteEvent(element.id ?? element._id)" aria-label="Delete">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </td>
-      </ng-container>
+        <button mat-icon-button color="warn" (click)="deleteEvent(e)" [disabled]="!e.id" aria-label="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-          No events found.
-        </td>
-      </tr>
-    </table>
-  </div>
-
-  <mat-paginator
-    [pageSizeOptions]="[5, 10, 25]"
-    [pageSize]="10"
-    showFirstLastButtons>
-  </mat-paginator>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
 </div>

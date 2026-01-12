@@ -34,6 +34,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { NgChartsModule } from 'ng2-charts'; // Import ng2-charts
 import {MatCardModule} from '@angular/material/card';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { PublicationFormComponent } from './publication-form/publication-form.component';
+import { EventsFormComponent } from './events-form/events-form.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +49,9 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     ToolsComponent,
     LoginComponent,
     ModalEventComponent,
-    DashboardComponent
+    DashboardComponent,
+    PublicationFormComponent,
+    EventsFormComponent
   ],
   imports: [
     MatCardModule,

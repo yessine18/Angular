@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PublicationService } from 'src/services/publication.service';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
+import { Publication } from '../../models/Publication';
+import { PublicationService } from '../../services/publication.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { PublicationFormComponent } from '../publication-form/publication-form.component';
 
 @Component({
   selector: 'app-publication',
@@ -10,40 +12,58 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
   styleUrls: ['./publication.component.css']
 })
 export class PublicationComponent {
-constructor(private PS:PublicationService,private dialog:MatDialog){}
-  dataSource: any[] = [];
-  
-//injecter MemberService GETAllMembers
-//a la reception =>remplir le tab dataSource
+  constructor(private PS: PublicationService, private dialog: MatDialog) {}
 
-//lance automatiquement quand on charge le composant
-ngOnInit(): void {
-  //x:tableu de membre (var locale)
-  this.PS.GETALLPublications().subscribe((x)=>{this.dataSource=x})
-}
+  dataSource: Publication[] = [];
 
-  displayedColumns: string[] = ['id', 'type', 'titre', 'lien', 'date', 'sourcepdf'];
+  displayedColumns: string[] = ['id', 'type', 'titre', 'lien', 'dateApparition', 'sourcePdf', 'actions'];
 
-   editPublication(publication: any) {
-    console.log('Edit publication:', publication);
-    // You can open a dialog or navigate to an edit form here
+  ngOnInit(): void {
+    this.reload();
   }
 
-  deletePublication(id: string) {
-    //1. lancer la boite
-    let dialogRef = this.dialog.open(ConfirmDialogComponent, {
-  height: '200px',
-  width: '300px',
-});
-    //2. attendre le restultat de user
-    dialogRef.afterClosed().subscribe(result => {
-      if (result)
-         this.PS.DELETEPublication(id).subscribe(()=>{
-      this.PS.GETALLPublications().subscribe((x)=>{this.dataSource=x})
-    })
+  reload(): void {
+    this.PS.GETALLPublications().subscribe({
+      next: (x) => (this.dataSource = x ?? []),
+      error: (e) => console.error('Load publications failed:', e)
+    });
+  }
 
-});
-    //3. si click=confirm
-   
+  addPublication(): void {
+    const ref = this.dialog.open(PublicationFormComponent, {
+      width: '650px',
+      data: null
+    });
+
+    ref.afterClosed().subscribe((changed) => {
+      if (changed) this.reload();
+    });
+  }
+
+  editPublication(publication: Publication): void {
+    const ref = this.dialog.open(PublicationFormComponent, {
+      width: '650px',
+      data: publication
+    });
+
+    ref.afterClosed().subscribe((changed) => {
+      if (changed) this.reload();
+    });
+  }
+
+  deletePublication(id: number): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      height: '200px',
+      width: '300px'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
+
+      this.PS.DELETEPublication(id).subscribe({
+        next: () => this.reload(),
+        error: (e) => console.error('Delete publication failed:', e)
+      });
+    });
   }
 }

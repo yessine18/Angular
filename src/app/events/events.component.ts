@@ -1,105 +1,56 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
 
-import { EvtService } from 'src/services/evt.service';
+import { Evt } from '../../models/Evt';
+import { EvtService } from '../../services/evt.service';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import { ModalEventComponent } from '../modal-event/modal-event.component';
+import { EventsFormComponent } from '../events-form/events-form.component';
 
 @Component({
   selector: 'app-events',
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.css']
 })
-export class EventsComponent implements OnInit, AfterViewInit {
-  // IMPORTANT: these ids MUST match matColumnDef values in the HTML
-  displayedColumns: string[] = ['id', 'title', 'date', 'actions'];
-
-  // Must be initialized to avoid undefined paginator errors
-  dataSource = new MatTableDataSource<any>([]);
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+export class EventsComponent {
+  dataSource: Evt[] = [];
+  displayedColumns: string[] = ['id', 'titre', 'lieu', 'dateApparition', 'actions'];
 
   constructor(private es: EvtService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
-    this.getAllEvents();
+    this.reload();
   }
 
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-  }
-
-  getAllEvents(): void {
+  reload(): void {
     this.es.GETALLEvts().subscribe({
-      next: (data: any[]) => {
-        this.dataSource.data = Array.isArray(data) ? data : [];
-        this.dataSource.paginator = this.paginator;
-      },
-      error: (err) => {
-        console.error('Error fetching events:', err);
-        this.dataSource.data = [];
-      }
+      next: (data) => (this.dataSource = data ?? []),
+      error: (err) => console.error('Load events failed:', err)
     });
-  }
-
-  applyFilter(event: Event): void {
-    const value = (event.target as HTMLInputElement).value ?? '';
-    this.dataSource.filter = value.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
   }
 
   addEvent(): void {
-    const ref = this.dialog.open(ModalEventComponent, {
-      width: '600px',
-      data: null
-    });
-
-    ref.afterClosed().subscribe((changed) => {
-      if (changed) this.getAllEvents();
-    });
+    const ref = this.dialog.open(EventsFormComponent, { width: '650px', data: null });
+    ref.afterClosed().subscribe((changed) => changed && this.reload());
   }
 
-  editEvent(element: any): void {
-    const ref = this.dialog.open(ModalEventComponent, {
-      width: '600px',
-      data: element
-    });
-
-    ref.afterClosed().subscribe((changed) => {
-      if (changed) this.getAllEvents();
-    });
+  editEvent(e: Evt): void {
+    const ref = this.dialog.open(EventsFormComponent, { width: '650px', data: e });
+    ref.afterClosed().subscribe((changed) => changed && this.reload());
   }
 
-  deleteEvent(id: any): void {
-    const ref = this.dialog.open(ConfirmDialogComponent, {
-      width: '420px',
-      data: {
-        title: 'Delete event',
-        message: 'Are you sure you want to delete this event?'
-      }
-    });
+  deleteEvent(e: Evt): void {
+    if (e.id == null) return;
+
+    // keep same confirm dialog usage style as your app
+    const ref = this.dialog.open(ConfirmDialogComponent, { height: '200px', width: '300px' });
 
     ref.afterClosed().subscribe((ok: boolean) => {
       if (!ok) return;
 
-      this.es.DELETEEvt(id).subscribe({
-        next: () => this.getAllEvents(),
+      this.es.DELETEEvt(e.id!).subscribe({
+        next: () => this.reload(),
         error: (err) => console.error('Delete failed:', err)
       });
     });
-  }
-
-  // Helpers so the UI works even if backend field names differ
-  getTitle(e: any): string {
-    return e?.title ?? e?.titre ?? e?.name ?? '';
-  }
-
-  getDate(e: any): any {
-    return e?.date ?? e?.dateEvt ?? e?.dateDebut ?? e?.startDate ?? null;
   }
 }
