@@ -61,10 +61,10 @@
       </mat-card-header>
       <mat-card-content>
         <div class="chart-wrapper">
-          <canvas baseChart
+          <canvas
+            baseChart
             [type]="'line'"
-            [datasets]="chartData"
-            [labels]="chartLabels"
+            [data]="chartData"
             [options]="chartOptions">
           </canvas>
         </div>
@@ -80,10 +80,10 @@
       </mat-card-header>
       <mat-card-content>
         <div class="chart-wrapper">
-          <canvas baseChart
+          <canvas
+            baseChart
             [type]="'pie'"
-            [datasets]="pieChartData"
-            [labels]="pieChartLabels"
+            [data]="pieChartData"
             [options]="pieChartOptions">
           </canvas>
         </div>

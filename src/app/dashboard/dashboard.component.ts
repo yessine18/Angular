@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { MemberService } from 'src/services/memeber.service';
-import { EvtService } from 'src/services/evt.service';
-import { PublicationService } from 'src/services/publication.service';
+import { forkJoin } from 'rxjs';
+import { ChartData, ChartOptions } from 'chart.js';
+
+import { MemberService } from '../../services/memeber.service';
+import { EvtService } from '../../services/evt.service';
+import { PublicationService } from '../../services/publication.service';
+import { OutilService } from '../../services/outil.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -9,77 +13,63 @@ import { PublicationService } from 'src/services/publication.service';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
+  NbMembers = 0;
+  NbEvents = 0;
+  NbPublications = 0;
+  NbTools = 0;
+  NbStudents = 0;
+  NbTeachers = 0;
+  NbArticles = 0;
 
-  NbMembers: number = 0;
-  NbEvents: number = 0;
-  NbPublications: number = 0;
-  NbTools: number = 0;
-  NbStudents: number = 0;
-  NbTeachers: number = 0;
-  NbArticles: number = 0;
+  chartOptions: ChartOptions = { responsive: true };
+  pieChartOptions: ChartOptions<'pie'> = { responsive: true };
 
-  // Chart Properties (Initialized to avoid errors)
-  chartData: any[] = [];
-  chartLabels: string[] = [];
-  chartOptions: any = { responsive: true };
-  
-  pieChartData: any[] = [];
-  pieChartLabels: string[] = [];
-  pieChartOptions: any = { responsive: true };
+  chartData: ChartData<'line'> = { labels: [], datasets: [{ data: [], label: 'Totals' }] };
+  pieChartData: ChartData<'pie', number[], string> = {
+    labels: ['Students', 'Teachers'],
+    datasets: [{ data: [0, 0] }]
+  };
 
   constructor(
     private Ms: MemberService,
     private Es: EvtService,
-    private Ps: PublicationService
+    private Ps: PublicationService,
+    private Os: OutilService
   ) {}
 
   ngOnInit(): void {
-    // 1. Load Members (Safe Subscription)
-    this.Ms.GETALLMembers().subscribe({
-      next: (data) => {
-        this.NbMembers = data.length;
-        this.NbStudents = data.filter((m: any) => m.role === 'STUDENT').length;
-        this.NbTeachers = data.filter((m: any) => m.role === 'TEACHER').length;
-        
-        // Prepare Pie Chart
-        this.pieChartLabels = ['Students', 'Teachers'];
-        this.pieChartData = [
-          { data: [this.NbStudents, this.NbTeachers], label: 'Distribution' }
-        ];
-      },
-      error: (err) => {
-        console.error('Error loading members', err);
-        // Set defaults so UI doesn't look broken
-        this.NbMembers = 0;
-      }
-    });
+    forkJoin({
+      members: this.Ms.GETALLMembers(),
+      events: this.Es.GETALLEvts(),
+      tools: this.Os.GETALLOutils(),
+      publications: this.Ps.GETALLPublications()
+    }).subscribe({
+      next: ({ members, events, tools, publications }) => {
+        this.NbMembers = (members ?? []).length;
+        this.NbEvents = (events ?? []).length;
+        this.NbTools = (tools ?? []).length;
+        this.NbPublications = (publications ?? []).length;
 
-    // 2. Load Events (Safe Subscription)
-    this.Es.GETALLEvts().subscribe({
-      next: (data) => {
-        this.NbEvents = data.length;
-        // Simple line chart mock data based on count
-        this.chartLabels = ['Total Events'];
-        this.chartData = [
-          { data: [this.NbEvents], label: 'Events' }
-        ];
-      },
-      error: (err) => {
-        console.error('Error loading events', err);
-        this.NbEvents = 0;
-      }
-    });
+        const list = members ?? [];
+        this.NbStudents = list.filter((m: any) => m?.dateInscription != null || m?.diplome != null).length;
+        this.NbTeachers = list.filter((m: any) => m?.grade != null || m?.etablissement != null).length;
 
-    // 3. Load Publications (Safe Subscription)
-    this.Ps.GETALLPublications().subscribe({
-      next: (data) => {
-        this.NbPublications = data.length;
-        this.NbArticles = data.filter((p: any) => p.type === 'Article').length;
+        this.NbArticles = (publications ?? []).filter((p: any) => {
+          const t = String(p?.type ?? '').toLowerCase();
+          return t === 'article' || t.includes('article');
+        }).length;
+
+        this.pieChartData = {
+          labels: ['Students', 'Teachers'],
+          datasets: [{ data: [this.NbStudents, this.NbTeachers] }]
+        };
+
+        this.chartData = {
+          labels: ['Members', 'Events', 'Tools', 'Articles'],
+          datasets: [{ data: [this.NbMembers, this.NbEvents, this.NbTools, this.NbArticles], label: 'Totals' }]
+        };
       },
-      error: (err) => {
-        console.error('Error loading publications', err);
-        this.NbPublications = 0;
-      }
+      error: (err) => console.error('Dashboard load failed', err)
     });
   }
 }
