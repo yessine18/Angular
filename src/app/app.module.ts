@@ -36,6 +36,7 @@ import {MatCardModule} from '@angular/material/card';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { PublicationFormComponent } from './publication-form/publication-form.component';
 import { EventsFormComponent } from './events-form/events-form.component';
+import { OutilFormComponent } from './outil-form/outil-form.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { EventsFormComponent } from './events-form/events-form.component';
     ModalEventComponent,
     DashboardComponent,
     PublicationFormComponent,
-    EventsFormComponent
+    EventsFormComponent,
+    OutilFormComponent
   ],
   imports: [
     MatCardModule,

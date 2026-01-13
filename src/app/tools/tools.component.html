@@ -1,1 +1,49 @@
-<p>tools works!</p>
+<div style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:16px;">
+  <h2 style="margin:0;">Tools</h2>
+
+  <button mat-raised-button color="primary" (click)="addTool()">
+    Add Tool
+  </button>
+</div>
+
+<div style="overflow:auto;">
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z2" style="width:100%;">
+
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef>ID</th>
+      <td mat-cell *matCellDef="let o">{{ o.id }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="source">
+      <th mat-header-cell *matHeaderCellDef>Source</th>
+      <td mat-cell *matCellDef="let o">
+        <a *ngIf="o.source" [href]="o.source" target="_blank" rel="noopener noreferrer">Open</a>
+        <span *ngIf="!o.source">-</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="dateApparition">
+      <th mat-header-cell *matHeaderCellDef>Date</th>
+      <td mat-cell *matCellDef="let o">
+        <span *ngIf="o.dateApparition; else noDate">{{ o.dateApparition | date:'yyyy-MM-dd' }}</span>
+        <ng-template #noDate>-</ng-template>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let o">
+        <button mat-icon-button color="primary" (click)="editTool(o)" aria-label="Edit">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <button mat-icon-button color="warn" (click)="deleteTool(o)" [disabled]="!o.id" aria-label="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>

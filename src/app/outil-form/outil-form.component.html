@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit Tool' : 'Add Tool' }}</h2>
+
+<div mat-dialog-content *ngIf="form" [formGroup]="form"
+     style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px;">
+
+  <mat-form-field appearance="outline" style="grid-column: 1 / -1;">
+    <mat-label>Source</mat-label>
+    <input matInput formControlName="source" placeholder="https://..." />
+    <mat-error *ngIf="form.get('source')?.hasError('required')">Source is required</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Date apparition</mat-label>
+    <input matInput [matDatepicker]="picker" formControlName="dateApparition" />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+</div>
+
+<div mat-dialog-actions align="end" style="gap: 8px;">
+  <button mat-button (click)="close()" [disabled]="loading">Cancel</button>
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="form?.invalid || loading">
+    {{ loading ? 'Saving...' : (isEdit ? 'Update' : 'Create') }}
+  </button>
+</div>

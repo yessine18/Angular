@@ -6,6 +6,8 @@ import { PublicationComponent } from './publication/publication.component';
 import { LoginComponent } from './login/login.component';
 import { EventsComponent } from './events/events.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { ToolsComponent } from './tools/tools.component'; // ✅ add this
+
 
 
 const routes: Routes = [
@@ -25,9 +27,8 @@ const routes: Routes = [
     path: 'login',
     component: LoginComponent
   },
-  {
-    path: 'dashboard',
-    component: DashboardComponent
+  { path: 'tools',
+    component: ToolsComponent
   },
   {
     path: 'publications',
